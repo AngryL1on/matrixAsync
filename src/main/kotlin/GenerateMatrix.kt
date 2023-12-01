@@ -15,7 +15,7 @@ fun generateMatrixToFile(n: Int, filePath: String) {
 }
 
 fun main() {
-    val n = 18
+    val n = 13
     val filePath = "matrix.txt"
 
     generateMatrixToFile(n, filePath)
