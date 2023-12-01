@@ -57,7 +57,6 @@ fun main() = runBlocking {
         println(row.joinToString(separator = "\t"))
     }
 
-    // Здесь нужно прочитать матрицу из файла и заполнить matrix
     val timeAsync = System.currentTimeMillis()
     val determinant = calculateDeterminant(matrix)
     val asyncTimeResult = (System.currentTimeMillis() - timeAsync)
