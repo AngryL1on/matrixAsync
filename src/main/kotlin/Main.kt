@@ -1,7 +1,4 @@
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.*
 import java.io.BufferedReader
 import java.io.File
 
@@ -29,19 +26,23 @@ suspend fun calculateDeterminant(matrix: List<List<Int>>): Int = coroutineScope 
         return@coroutineScope matrix[0][0]
     }
 
-    val result = async(Dispatchers.Default) {
-        var determinant = 0
+    val deferredResults = mutableListOf<Deferred<Int>>()
 
-        for (col in matrix.indices) {
+    for (col in matrix.indices) {
+        val deferredResult = async(Dispatchers.Default) {
+//            val threadName = Thread.currentThread().name
+//            println("Thread name for column $col: $threadName")
+
             val minor = getMinor(matrix, 0, col)
             val cofactor = matrix[0][col] * calculateDeterminant(minor)
-            determinant += if (col % 2 == 0) cofactor else -cofactor
+            if (col % 2 == 0) cofactor else -cofactor
         }
-
-        determinant
+        deferredResults.add(deferredResult)
     }
 
-    result.await()
+    val results = deferredResults.awaitAll()
+
+    results.sum()
 }
 
 fun getMinor(matrix: List<List<Int>>, rowToRemove: Int, colToRemove: Int): List<List<Int>> {
